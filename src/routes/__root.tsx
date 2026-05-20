@@ -65,8 +65,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Finova — Dashboard Financeiro Pessoal" },
-      { name: "description", content: "Controle suas receitas, despesas e previsão de saldo com o Finova." },
+      { title: "Banco Patinho — Dashboard Financeiro Pessoal" },
+      { name: "description", content: "Controle suas receitas, despesas e previsão de saldo com o Banco Patinho." },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
