@@ -71,7 +71,7 @@ function LoginPage() {
             <Wallet className="h-7 w-7 text-primary-foreground" />
           </div>
           <h1 className="font-display text-4xl font-bold tracking-tight">
-            <span className="text-gradient">Finova</span>
+            <span className="text-gradient">Banco Patinho</span>
           </h1>
           <p className="text-sm text-muted-foreground">Seu dashboard financeiro inteligente</p>
         </div>
