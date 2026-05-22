@@ -74,30 +74,75 @@ function OraclePage() {
   const send = async (text?: string) => {
     const content = (text ?? input).trim();
     if (!content) return;
+    
     const userMsg: ChatMessage = {
       id: crypto.randomUUID(),
       role: "user",
       content,
       createdAt: new Date().toISOString(),
     };
+    
     setMessages((m) => [...m, userMsg]);
     setInput("");
     setTyping(true);
 
-    // MOCK — substitua por chamada a Gemini/OpenAI usando `anonymizedContext`.
-    // Exemplo de payload pronto para envio:
-    // POST /chat { messages, context: anonymizedContext }
-    console.log("[Oráculo] payload anonimizado:", anonymizedContext);
-    setTimeout(() => {
+    try {
+      // 1. Montamos o "prompt do sistema", passando seus gastos de forma anônima para a IA ter contexto
+      const systemPrompt = `Você é o Oráculo Financeiro, um assistente inteligente integrado a um dashboard de finanças pessoais.
+      Aqui está o resumo financeiro atualizado do mês do usuário:
+      - Total de Receitas: R$ ${anonymizedContext.income_total.toFixed(2)}
+      - Total de Despesas: R$ ${anonymizedContext.expense_total.toFixed(2)}
+      - Saldo: R$ ${anonymizedContext.balance.toFixed(2)}
+      - Gastos por Categoria: ${JSON.stringify(anonymizedContext.by_category)}
+      
+      Responda à seguinte pergunta do usuário de forma direta, amigável e focada em educação financeira. 
+      Pergunta: "${content}"`;
+
+      //Fazemos a chamada real para a API do Google Gemini
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: systemPrompt }] }],
+          }),
+        }
+      );
+
+      const data = await response.json();
+      
+      // NOVO: Vamos espiar a resposta real do Google no Console
+      console.log("Resposta do Google:", data);
+
+      // Se o Google enviou um erro, nós jogamos ele para o bloco 'catch' lá embaixo
+      if (data.error) {
+        throw new Error(data.error.message);
+      }
+      
+      // 3. Pegamos a resposta da IA e colocamos na tela
+      const iaText = data.candidates[0].content.parts[0].text;
+
       const reply: ChatMessage = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content: mockReply(content, anonymizedContext),
+        content: iaText,
         createdAt: new Date().toISOString(),
       };
+      
       setMessages((m) => [...m, reply]);
+    } catch (error) {
+      console.error("Erro na API do Gemini:", error);
+      const errorReply: ChatMessage = {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: "Desculpe, tive um problema de conexão com a API do Gemini. Verifique se a chave VITE_GEMINI_API_KEY está correta no arquivo .env e se o servidor foi reiniciado!",
+        createdAt: new Date().toISOString(),
+      };
+      setMessages((m) => [...m, errorReply]);
+    } finally {
       setTyping(false);
-    }, 900);
+    }
   };
 
   return (
@@ -191,20 +236,4 @@ function OraclePage() {
       </Card>
     </div>
   );
-}
-
-function mockReply(q: string, ctx: { expense_total: number; balance: number; by_category: Record<string, number> }) {
-  const top = Object.entries(ctx.by_category).sort((a, b) => b[1] - a[1])[0];
-  const lower = q.toLowerCase();
-  if (lower.includes("investir") || lower.includes("investimento")) {
-    return `Para R$ 100/mês considere começar pelo **Tesouro Selic** (liquidez diária) ou um **CDB com 100% do CDI**. Mantenha uma reserva de emergência antes de buscar renda variável.`;
-  }
-  if (lower.includes("reserva")) {
-    return `Sua reserva ideal cobre **3 a 6 meses de gastos essenciais**. Considerando seu gasto mensal atual de R$ ${ctx.expense_total.toFixed(2)}, mire entre R$ ${(ctx.expense_total * 3).toFixed(0)} e R$ ${(ctx.expense_total * 6).toFixed(0)}.`;
-  }
-  if (lower.includes("analise") || lower.includes("gastos")) {
-    if (!top) return "Você ainda não tem despesas registradas neste mês. Adicione algumas para receber análises personalizadas.";
-    return `Este mês: receitas R$ ${ctx.balance + ctx.expense_total > 0 ? (ctx.balance + ctx.expense_total).toFixed(2) : "0,00"}, despesas R$ ${ctx.expense_total.toFixed(2)}.\nSua maior categoria foi **${top[0]}** (R$ ${top[1].toFixed(2)}). Considere revisar contratos e assinaturas para otimizar.`;
-  }
-  return `Recebi sua pergunta. Para conectar uma IA real, troque o \`mockReply\` em \`src/routes/_authenticated/oracle.tsx\` por uma chamada à API do **Gemini** ou **OpenAI**, enviando o objeto \`anonymizedContext\` já preparado.`;
 }
