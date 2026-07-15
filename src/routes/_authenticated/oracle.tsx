@@ -87,7 +87,7 @@ function OraclePage() {
     setTyping(true);
 
     try {
-      // 1. Montamos o "prompt do sistema", passando seus gastos de forma anônima para a IA ter contexto
+      //bloco do "prompt do sistema", passando os gastos de forma anônima para a IA ter contexto
       const systemPrompt = `Você é o Oráculo Financeiro, um assistente inteligente integrado a um dashboard de finanças pessoais.
       Aqui está o resumo financeiro atualizado do mês do usuário:
       - Total de Receitas: R$ ${anonymizedContext.income_total.toFixed(2)}
