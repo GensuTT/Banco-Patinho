@@ -4,7 +4,7 @@
 
 O **Banco Patinho** é um dashboard financeiro inteligente e simpático (muito fofo!), focado em ajudar o usuário a gerenciar suas finanças pessoais com o auxílio de Inteligência Artificial e dados em tempo real.
 
-Tive essa ideia pois eu necessitava de algo assim e pensei em eu mesmo desenvolver com base no meu contexto. Dessa forma, ao mesmo tempo que ganhei as funcionalidades que gostaria, consegui também treinar e aprimorar meus conhecimentos na minha área de atuação. 
+Criei o Banco Patinho para resolver um problema meu: ter um controle financeiro prático, inteligente e do meu jeito. Para além de uma ferramenta, o projeto se tornou o meu "laboratório de tecnologia".
 Neste projeto, utilizei o auxílio de Inteligência Artificial para acelerar o desenvolvimento do frontend, o que me permitiu focar as minhas energias e estudos na construção do backend, na arquitetura de segurança e nas integrações de APIs.
 
 ---
