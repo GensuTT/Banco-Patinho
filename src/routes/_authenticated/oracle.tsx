@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useRef, useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Send, Sparkles, Shield } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -87,7 +88,7 @@ function OraclePage() {
     setTyping(true);
 
     try {
-      //bloco do "prompt do sistema", passando os gastos de forma anônima para a IA ter contexto
+      // bloco do "prompt do sistema", passando os gastos de forma anônima para a IA ter contexto
       const systemPrompt = `Você é o Oráculo Financeiro, um assistente inteligente integrado a um dashboard de finanças pessoais.
       Aqui está o resumo financeiro atualizado do mês do usuário:
       - Total de Receitas: R$ ${anonymizedContext.income_total.toFixed(2)}
@@ -98,30 +99,19 @@ function OraclePage() {
       Responda à seguinte pergunta do usuário de forma direta, amigável e focada em educação financeira. 
       Pergunta: "${content}"`;
 
-      //Fazemos a chamada real para a API do Google Gemini
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${import.meta.env.VITE_GEMINI_API_KEY}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: systemPrompt }] }],
-          }),
-        }
-      );
+      // Por segurança, usando a Edge Function ao invés do Google
+      const { data, error } = await supabase.functions.invoke('chat-gemini', {
+        body: { prompt: systemPrompt }
+      });
 
-      const data = await response.json();
-      
-      // NOVO: Vamos espiar a resposta real do Google no Console
-      console.log("Resposta do Google:", data);
-
-      // Se o Google enviou um erro, nós jogamos ele para o bloco 'catch' lá embaixo
-      if (data.error) {
-        throw new Error(data.error.message);
+      // Se a Edge Function falhar, vai para o bloco catch lá embaixo
+      if (error) {
+        throw new Error(error.message);
       }
       
-      // 3. Pegamos a resposta da IA e colocamos na tela
-      const iaText = data.candidates[0].content.parts[0].text;
+      // A Edge Function devolve exatamente o texto pronto
+      // pega a resposta da IA e coloca na tela
+      const iaText = data.text;
 
       const reply: ChatMessage = {
         id: crypto.randomUUID(),
@@ -132,11 +122,11 @@ function OraclePage() {
       
       setMessages((m) => [...m, reply]);
     } catch (error) {
-      console.error("Erro na API do Gemini:", error);
+      console.error("Erro na Edge Function:", error);
       const errorReply: ChatMessage = {
         id: crypto.randomUUID(),
         role: "assistant",
-        content: "Desculpe, tive um problema de conexão com a API do Gemini. Verifique se a chave VITE_GEMINI_API_KEY está correta no arquivo .env e se o servidor foi reiniciado!",
+        content: "Desculpe, tive um problema de conexão com o servidor. Verifique se a sua Edge Function está online no Supabase!",
         createdAt: new Date().toISOString(),
       };
       setMessages((m) => [...m, errorReply]);
