@@ -2,7 +2,7 @@
 
 **Acesse o repositório:** [https://github.com/GensuTT/Banco-Patinho](https://github.com/GensuTT/Banco-Patinho)
 
-O **Banco Patinho** é um dashboard financeiro inteligente e simpático (muito fofo!), focado em ajudar o usuário a gerenciar suas finanças pessoais com o auxílio de Inteligência Artificial e dados em tempo real.
+O **Banco Patinho** é um dashboard financeiro inteligente focado em ajudar o usuário a gerenciar suas finanças pessoais com o auxílio de Inteligência Artificial e dados em tempo real.
 
 Criei o Banco Patinho para resolver um problema meu: ter um controle financeiro prático, inteligente e do meu jeito. Para além de uma ferramenta, o projeto se tornou o meu "laboratório de tecnologia".
 Neste projeto, utilizei o auxílio de Inteligência Artificial para acelerar o desenvolvimento do frontend, o que me permitiu focar as minhas energias e estudos na construção do backend, na arquitetura de segurança e nas integrações de APIs.
