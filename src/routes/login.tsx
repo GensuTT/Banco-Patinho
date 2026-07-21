@@ -55,13 +55,19 @@ function LoginPage() {
 
   const google = async () => {
     setLoading(true);
-    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
-    if (r.error) {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/dashboard`,
+      },
+    });
+    
+    if (error) {
       setLoading(false);
-      toast.error("Falha no login Google");
+      toast.error("Falha no login Google: " + error.message);
     }
   };
-
+  
   return (
     <div className="relative flex min-h-screen items-center justify-center px-4">
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/5 via-transparent to-accent/10" />
