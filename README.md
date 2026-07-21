@@ -14,6 +14,7 @@ Neste projeto, utilizei o auxílio de Inteligência Artificial para acelerar o d
 *   **Dashboard Financeiro:** Visão geral de receitas, despesas e saldo anonimizados.
 *   **Oráculo Financeiro (IA):** Um assistente virtual integrado que analisa o contexto financeiro do usuário e dá conselhos utilizando o modelo Gemini 3.5 Flash.
 *   **Widget de Câmbio:** Consulta de cotações de moedas em tempo real.
+*   **Autenticação com Google:** Login seguro com e-mail/senha ou integração social via conta do Google.
 
 ---
 
@@ -24,6 +25,7 @@ Neste projeto, utilizei o auxílio de Inteligência Artificial para acelerar o d
 *   **Integrações (APIs):** 
     *   Google Gemini API (`gemini-3.5-flash`)
     *   AwesomeAPI (Cotação de Câmbio)
+*   **Automação:** GitHub Actions (CI/CD e Cron Jobs)
 *   **Deploy & Hospedagem:** Cloudflare Pages
 
 ---
@@ -39,7 +41,7 @@ Neste projeto, utilizei o auxílio de Inteligência Artificial para acelerar o d
 **2ª Opção: Clonar o repositório e rodar localmente**
 1. Clone o repositório:
    ```bash
-   git clone [https://github.com/GensuTT/Banco-Patinho.git](https://github.com/GensuTT/Banco-Patinho.git)
+   git clone https://github.com/GensuTT/Banco-Patinho.git
    ```
 2. Acesse a pasta do projeto:
    ```bash
@@ -66,6 +68,10 @@ A construção do Banco Patinho foi um grande laboratório de estudos para arqui
 *   **Integração e Consumo de APIs:**
     *   Aprendi a buscar dados em tempo real consumindo a **AwesomeAPI** para alimentar o widget de câmbio.
     *   Integrei o **Google Gemini**, lidando com formatação de *prompts* de sistema, envio de contexto anonimizado para a IA e atualização da versão do modelo para o `gemini-3.5-flash`.
+*   **Autenticação e OAuth (Login Social):**
+   Implementei o login com o Google configurando o Supabase como provedor de identidade. Isso envolveu o gerenciamento de credenciais na nuvem (Google Cloud Console), configuração de Client IDs e controle de rotas de redirecionamento seguras.
+*   **Automação com GitHub Actions:**
+   Criei um fluxo de trabalho (workflow) automatizado utilizando cron jobs para realizar chamadas de Health Check regulares na API. Isso garantiu que o banco de dados do Supabase não fosse pausado por inatividade, automatizando a manutenção do servidor.
 *   **Deploy e Variáveis de Ambiente em Produção:**
     Configurei o ambiente de produção na **Cloudflare**. Isso envolveu aprender a separar as variáveis de ambiente locais (`.env`) das variáveis públicas e secretas na nuvem, lidar com configurações do `wrangler` e resolver problemas clássicos de roteamento (erros 404) em *Single Page Applications* (SPAs).
 *   **Resolução de Conflitos e Git:**
